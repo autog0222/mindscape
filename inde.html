@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindScape - 2026 XR Mental Wellness</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Orbitron:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #0a0a0a;
+            color: white;
+            overflow-x: hidden;
+            transition: color 1s ease, background-color 1s ease;
+        }
+
+        .font-future {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        /* --- Background Systems --- */
+        .bg-container {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1;
+            transition: opacity 1.5s ease-in-out;
+        }
+
+        /* Themes */
+        .theme-dark { background: #0a0a0a; opacity: 1; }
+        .theme-dark .aurora-gradient {
+            position: absolute; width: 100%; height: 100%;
+            background: radial-gradient(circle at 15% 50%, rgba(76, 29, 149, 0.4), transparent 25%),
+                        radial-gradient(circle at 85% 30%, rgba(45, 212, 191, 0.2), transparent 25%);
+            filter: blur(60px); animation: aurora 15s infinite alternate;
+        }
+        .theme-light { background: #f0fdfa; opacity: 0; pointer-events: none; }
+        .theme-light .sunny-gradient {
+            position: absolute; width: 100%; height: 100%;
+            background: radial-gradient(circle at 80% 10%, rgba(253, 224, 71, 0.3), transparent 40%),
+                        radial-gradient(circle at 20% 80%, rgba(52, 211, 153, 0.2), transparent 40%);
+            filter: blur(40px); animation: sunny-pulse 10s infinite alternate;
+        }
+
+        /* Active State for Themes & Text Visibility Fixes */
+        body.light-mode .theme-dark { opacity: 0; }
+        body.light-mode .theme-light { opacity: 1; }
+        body.light-mode { color: #1f2937; }
+        body.light-mode .text-gray-400 { color: #4b5563; }
+        
+        /* 라이트 모드 텍스트 가독성 */
+        body.light-mode .text-gray-300 { color: #111827; font-weight: 600; } 
+        body.light-mode .vision-btn { color: #0d9488 !important; font-weight: 700; }
+
+        body.light-mode .glass-card {
+            background: rgba(255, 255, 255, 0.4); border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+        }
+        body.light-mode nav { background: rgba(255, 255, 255, 0.85); border-bottom: 1px solid rgba(0,0,0,0.1); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+        body.light-mode nav .text-white { color: #000000; } 
+        
+        @keyframes aurora { 0% { opacity: 0.8; } 50% { opacity: 1; } 100% { opacity: 0.8; } }
+        @keyframes sunny-pulse { 0% { opacity: 0.8; } 100% { opacity: 1; } }
+
+        /* Glassmorphism */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; transition: all 0.5s ease;
+        }
+        .glass-card:hover { transform: translateY(-5px); border-color: rgba(45, 212, 191, 0.5); }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #e2e8f0 0%, #2dd4bf 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        body.light-mode .text-gradient {
+            background: linear-gradient(135deg, #0f766e 0%, #2dd4bf 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        /* Animation Classes */
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 1s ease; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; }
+        body.light-mode ::-webkit-scrollbar-thumb { background: #cbd5e1; }
+
+        .view-section { display: block; animation: fadeIn 0.5s ease-in-out; }
+        .view-section.hidden-view { display: none; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- XR OS 3D DASHBOARD STYLES --- */
+        .xr-viewport {
+            perspective: 1000px; /* 3D Perspective */
+            overflow: hidden;
+        }
+        
+        .app-grid-container {
+            transform-style: preserve-3d;
+        }
+
+        /* 3D Hover Effect on Icons */
+        .app-icon-wrapper {
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+        .app-icon-wrapper:hover {
+            transform: translateZ(50px) scale(1.15); /* Pops out */
+            z-index: 20;
+        }
+
+        .app-icon {
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            transition: all 0.3s ease;
+        }
+        .app-icon-wrapper:hover .app-icon {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+        }
+        
+        /* Zoom-In Transition */
+        @keyframes zoom-in-transition {
+            0% { 
+                transform: scale(1) translateZ(0); 
+                opacity: 1; 
+            }
+            30% { opacity: 1; }
+            100% { 
+                transform: scale(10) translateZ(800px); 
+                opacity: 0; 
+            }
+        }
+        .launching .app-grid-container {
+            animation: zoom-in-transition 1.2s forwards cubic-bezier(0.7, 0, 0.3, 1);
+            pointer-events: none;
+        }
+
+        /* Fade In Simulation */
+        @keyframes sim-fade-in {
+            from { opacity: 0; filter: blur(10px); }
+            to { opacity: 1; filter: blur(0); }
+        }
+        .fade-in-sim {
+            animation: sim-fade-in 1.5s ease-out forwards;
+        }
+
+        /* Parallax Layer - Static now */
+        .parallax-bg {
+            /* Removed transform transition related to mouse movement */
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* Pricing Card Hover Effect */
+        .pricing-card {
+            transition: all 0.3s ease;
+        }
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(45, 212, 191, 0.1);
+            border-color: rgba(45, 212, 191, 0.4);
+        }
+        /* Light Theme Pricing specific overrides */
+        body.light-mode .pricing-card {
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(209, 213, 219, 0.5); /* Gray-300 */
+        }
+        body.light-mode .pricing-card:hover {
+            box-shadow: 0 20px 40px rgba(45, 212, 191, 0.15);
+            border-color: rgba(45, 212, 191, 0.6);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="bg-container theme-dark"><div class="aurora-gradient"></div></div>
+    <div class="bg-container theme-light"><div class="sunny-gradient"></div></div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 px-6 py-4 bg-black/50 backdrop-blur-md border-b border-white/10 transition-colors duration-500">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="text-2xl font-bold font-future tracking-wider text-white flex items-center gap-2 transition-colors duration-500 cursor-pointer" onclick="switchView('home')">
+                <i data-lucide="brain-circuit" class="text-teal-400"></i>
+                MindScape
+            </div>
+            <div class="hidden md:flex gap-8 text-sm font-light text-gray-300 transition-colors duration-500">
+                <button onclick="navigateTo('concept')" class="hover:text-teal-400 transition">Concept</button>
+                <button onclick="navigateTo('features')" class="hover:text-teal-400 transition">Features</button>
+                <button onclick="navigateTo('xr-experience')" class="hover:text-teal-400 transition">Experience</button>
+                <button onclick="navigateTo('pricing')" class="hover:text-teal-400 transition">Pricing</button>
+                <button onclick="switchView('vision')" class="hover:text-teal-400 transition text-teal-200 font-medium vision-btn">Vision 2026</button>
+            </div>
+            <button onclick="switchView('vision')" class="px-4 py-2 rounded-full bg-teal-500/10 hover:bg-teal-500/20 border border-teal-500/30 hover:border-teal-400 transition text-sm text-current font-medium">
+                Project Proposal
+            </button>
+        </div>
+    </nav>
+
+    <!-- VIEW 1: HOME -->
+    <main id="view-home" class="view-section">
+        <!-- Hero Section -->
+        <section id="hero" data-theme="dark" class="min-h-screen flex flex-col justify-center items-center text-center px-4 relative overflow-hidden">
+            <div class="z-10 max-w-4xl space-y-6">
+                <span class="px-4 py-1 rounded-full border border-teal-500/30 bg-teal-500/10 text-teal-500 text-xs tracking-widest uppercase mb-4 inline-block reveal">
+                    Design Trend 2026 : Phygital Reality
+                </span>
+                <h1 class="text-5xl md:text-7xl font-bold leading-tight reveal" style="transition-delay: 0.1s;">
+                    현실을 넘어선<br><span class="text-gradient">마음의 안식처</span>
+                </h1>
+                <p class="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed reveal" style="transition-delay: 0.2s;">
+                    물리적 공간(Physical)과 디지털 치유(Digital)가 결합된<br>AR 기반 차세대 심리 케어 솔루션, <strong>MindScape</strong>
+                </p>
+                <div class="pt-8 reveal" style="transition-delay: 0.3s;">
+                    <div class="flex justify-center gap-4">
+                        <button onclick="navigateTo('xr-experience')" class="px-8 py-3 rounded-full bg-teal-500 hover:bg-teal-400 text-black font-bold transition shadow-[0_0_20px_rgba(45,212,191,0.4)]">
+                            Explore Solution
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="absolute bottom-10 animate-bounce opacity-50"><i data-lucide="chevron-down" class="w-8 h-8"></i></div>
+        </section>
+
+        <!-- Concept Section -->
+        <section id="concept" data-theme="dark" class="py-24 px-6 relative">
+             <div class="max-w-6xl mx-auto">
+                <div class="grid md:grid-cols-2 gap-16 items-center">
+                    <div class="reveal">
+                        <h2 class="text-3xl md:text-4xl font-bold mb-6">왜 <span class="text-teal-400">XR 심리상담</span>인가요?</h2>
+                        <p class="text-gray-400 mb-6 leading-relaxed">2026년, 디지털 피로도는 극에 달하고 사람들은 '진정한 휴식'을 갈망합니다. 하지만 텍스트 기반의 AI 상담은 차갑고, 대면 상담은 부담스럽습니다.</p>
+                        <p class="text-gray-400 leading-relaxed">우리는 <strong>증강현실(AR)</strong>을 통해 당신의 방을 즉시 '치유의 숲'으로 바꿉니다. 단순한 대화를 넘어, 시각과 청각을 아우르는 공감각적 경험을 제공합니다.</p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 reveal">
+                        <div class="glass-card p-6 flex flex-col items-center text-center gap-4"><i data-lucide="smartphone-nfc" class="w-10 h-10 text-purple-400"></i><h3 class="font-bold text-lg">Phygital</h3><p class="text-xs text-gray-500">물리적 공간과<br>디지털의 융합</p></div>
+                        <div class="glass-card p-6 flex flex-col items-center text-center gap-4 mt-8"><i data-lucide="sparkles" class="w-10 h-10 text-yellow-400"></i><h3 class="font-bold text-lg">Hyper-Personal</h3><p class="text-xs text-gray-500">초개인화된<br>AI 맞춤 케어</p></div>
+                        <div class="glass-card p-6 flex flex-col items-center text-center gap-4"><i data-lucide="heart-pulse" class="w-10 h-10 text-pink-400"></i><h3 class="font-bold text-lg">Neuro-Aesthetics</h3><p class="text-xs text-gray-500">뇌과학 기반<br>심리 안정 디자인</p></div>
+                        <div class="glass-card p-6 flex flex-col items-center text-center gap-4 mt-8"><i data-lucide="users" class="w-10 h-10 text-blue-400"></i><h3 class="font-bold text-lg">Accessibility</h3><p class="text-xs text-gray-500">언제 어디서나<br>즉각적인 상담</p></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="py-24 px-6 relative transition-colors duration-1000">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-24 reveal" data-theme="dark">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">Core Solution</h2>
+                    <p class="text-gray-400">MindScape가 제안하는 두 가지 핵심 경험</p>
+                </div>
+                <div class="space-y-32">
+                    <div class="grid md:grid-cols-2 gap-12 items-center reveal" data-theme="dark">
+                        <div class="order-2 md:order-1 relative group">
+                            <div class="absolute inset-0 bg-teal-500/20 blur-3xl rounded-full group-hover:bg-teal-500/30 transition duration-500"></div>
+                            <div class="glass-card p-8 relative z-10 border-teal-500/30">
+                                <div class="flex items-center gap-4 mb-6 border-b border-white/10 pb-4">
+                                    <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-purple-500 to-blue-500 flex items-center justify-center shadow-lg"><i data-lucide="bot" class="text-white"></i></div>
+                                    <div><div class="font-bold">Dr. Aura (AI)</div><div class="text-xs text-teal-500 font-medium">Connected • Feeling: Calm</div></div>
+                                </div>
+                                <div class="space-y-3 mb-6">
+                                    <div class="bg-white/5 p-3 rounded-lg rounded-tl-none text-sm text-gray-400 max-w-[85%]">오늘 하루 많이 지치셨군요. 표정에서 피로가 느껴져요.</div>
+                                    <div class="bg-teal-500/10 p-3 rounded-lg rounded-tr-none text-sm text-teal-600 ml-auto max-w-[85%] text-right font-medium">응, 비도 오고 기분이 좀 처지네.</div>
+                                    <div class="bg-white/5 p-3 rounded-lg rounded-tl-none text-sm text-gray-400 max-w-[85%]">그렇다면 분위기를 바꿔볼까요? <br><strong>'화창한 숲'</strong> 테마를 적용해 드릴게요.</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="order-1 md:order-2">
+                            <div class="text-teal-500 font-future text-sm mb-2 font-bold">01. AI COUNSELOR</div>
+                            <h3 class="text-3xl font-bold mb-4">감정을 읽는<br>AI 아바타</h3>
+                            <p class="text-gray-400 leading-relaxed mb-6">단순한 챗봇이 아닙니다. 당신의 표정과 음성 톤을 분석하여 가장 적절한 위로를 건넵니다.</p>
+                        </div>
+                    </div>
+                    <div id="ar-section-trigger" class="grid md:grid-cols-2 gap-12 items-center reveal" data-theme="light">
+                        <div>
+                            <div class="text-purple-500 font-future text-sm mb-2 font-bold">02. AR IMMERSION</div>
+                            <h3 class="text-3xl font-bold mb-4">내 방이 곧<br>치유의 숲이 되다</h3>
+                            <p class="text-gray-400 leading-relaxed mb-6"><span class="text-teal-500 font-bold">⬇ 스크롤을 해보셨나요?</span><br>MindScape는 당신의 기분에 맞춰 현실 공간의 분위기를 즉시 바꿉니다. 우울할 땐 산뜻한 숲으로, 불안할 땐 고요한 바다로 공간을 변화시킵니다.</p>
+                            <ul class="space-y-3 text-gray-400">
+                                <li class="flex items-center gap-3"><i data-lucide="sun" class="w-5 h-5 text-amber-500"></i><strong>Mood Lighting:</strong> 어두운 감정을 밝히는 AR 조명</li>
+                                <li class="flex items-center gap-3"><i data-lucide="trees" class="w-5 h-5 text-green-500"></i><strong>Biophilic Design:</strong> 자연 요소를 공간에 투영</li>
+                            </ul>
+                        </div>
+                        <div class="relative group">
+                            <div class="absolute inset-0 bg-green-500/20 blur-3xl rounded-full group-hover:bg-green-500/30 transition duration-500"></div>
+                            <div class="glass-card h-96 relative overflow-hidden flex items-center justify-center border-green-500/30 shadow-2xl">
+                                <!-- Image ID Added for JS control -->
+                                <div id="feature-card-bg" class="absolute inset-0 bg-cover bg-center opacity-80 transition-opacity duration-1000"></div>
+                                <div class="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-white/90 to-transparent">
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <div class="bg-green-500 text-white p-2 rounded-full"><i data-lucide="check" class="w-4 h-4"></i></div>
+                                        <div><p class="text-sm font-bold text-gray-800">Theme Changed</p><p class="text-xs text-gray-600">Sunny Forest Mode Active</p></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Combined XR Experience Section: OS Dashboard -> App -->
+        <section id="xr-experience" data-theme="light" class="py-24 px-6 relative">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-10 reveal">
+                    <span class="px-3 py-1 rounded-full bg-teal-100 text-teal-800 text-xs font-bold uppercase mb-3 inline-block">XR Experience</span>
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">MindScape OS</h2>
+                    <p class="text-gray-400">OS 대시보드입니다. 'MindScape' 앱을 선택하여 실행하세요.</p>
+                </div>
+
+                <!-- Device Frame -->
+                <div id="xr-viewport" class="relative mx-auto max-w-5xl aspect-video rounded-2xl border-4 border-gray-800 bg-black overflow-hidden shadow-2xl reveal group xr-viewport">
+                    
+                    <!-- 1. INITIAL LAYER: OS Dashboard (Launchpad) -->
+                    <div id="app-launcher" class="absolute inset-0 z-30 flex items-center justify-center transition-opacity duration-800">
+                        
+                        <!-- [1] 초기 화면 배경 (거실 뷰 - Online Fallback) - ID assigned -->
+                        <div id="launcher-bg" class="parallax-bg absolute inset-0 w-full h-full bg-cover bg-center z-0" style="opacity: 0.9;"></div>
+
+                        <!-- Glass Overlay -->
+                        <div class="absolute inset-0 bg-black/30 backdrop-blur-[1px] z-10"></div>
+                        
+                        <!-- App Grid Container -->
+                        <div id="app-grid" class="app-grid-container grid grid-cols-4 gap-8 relative z-40 p-10 transition-transform duration-100 ease-out">
+                            
+                            <!-- Target App: MindScape (Clickable) -->
+                            <div class="app-icon-wrapper flex flex-col items-center gap-4 cursor-pointer group" onclick="launchMindScape()">
+                                <div class="app-icon w-24 h-24 rounded-full bg-gradient-to-br from-teal-400 to-blue-600 flex items-center justify-center relative overflow-hidden">
+                                    <div class="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                    <i data-lucide="brain-circuit" class="w-12 h-12 text-white drop-shadow-md"></i>
+                                </div>
+                                <span class="text-white text-sm font-medium drop-shadow-lg bg-black/20 px-3 py-1 rounded-full backdrop-blur-md group-hover:scale-105 transition-transform">MindScape</span>
+                            </div>
+
+                            <!-- Decorative Dummy Apps -->
+                            <div class="app-icon-wrapper flex flex-col items-center gap-4 cursor-default opacity-90 hover:opacity-100">
+                                <div class="app-icon w-24 h-24 rounded-full bg-gray-800/80 flex items-center justify-center"><i data-lucide="message-circle" class="w-10 h-10 text-green-400"></i></div><span class="text-white text-sm font-medium drop-shadow-lg">Messages</span>
+                            </div>
+                            <div class="app-icon-wrapper flex flex-col items-center gap-4 cursor-default opacity-90 hover:opacity-100">
+                                <div class="app-icon w-24 h-24 rounded-full bg-gray-100/90 flex items-center justify-center"><i data-lucide="image" class="w-10 h-10 text-blue-500"></i></div><span class="text-white text-sm font-medium drop-shadow-lg">Photos</span>
+                            </div>
+                            <div class="app-icon-wrapper flex flex-col items-center gap-4 cursor-default opacity-90 hover:opacity-100">
+                                <div class="app-icon w-24 h-24 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center"><i data-lucide="music" class="w-10 h-10 text-white"></i></div><span class="text-white text-sm font-medium drop-shadow-lg">Music</span>
+                            </div>
+                            <!-- Row 2 -->
+                            <div class="app-icon-wrapper flex flex-col items-center gap-4 cursor-default opacity-90 hover:opacity-100">
+                                <div class="app-icon w-24 h-24 rounded-full bg-blue-500 flex items-center justify-center"><i data-lucide="compass" class="w-10 h-10 text-white"></i></div><span class="text-white text-sm font-medium drop-shadow-lg">Safari</span>
+                            </div>
+                            <div class="app-icon-wrapper flex flex-col items-center gap-4 cursor-default opacity-90 hover:opacity-100">
+                                <div class="app-icon w-24 h-24 rounded-full bg-gray-600 flex items-center justify-center"><i data-lucide="settings" class="w-10 h-10 text-gray-300"></i></div><span class="text-white text-sm font-medium drop-shadow-lg">Settings</span>
+                            </div>
+                             <div class="app-icon-wrapper flex flex-col items-center gap-4 cursor-default opacity-90 hover:opacity-100">
+                                <div class="app-icon w-24 h-24 rounded-full bg-yellow-400 flex items-center justify-center"><i data-lucide="sticky-note" class="w-10 h-10 text-white"></i></div><span class="text-white text-sm font-medium drop-shadow-lg">Notes</span>
+                            </div>
+                             <div class="app-icon-wrapper flex flex-col items-center gap-4 cursor-default opacity-90 hover:opacity-100">
+                                <div class="app-icon w-24 h-24 rounded-full bg-green-500 flex items-center justify-center"><i data-lucide="phone" class="w-10 h-10 text-white"></i></div><span class="text-white text-sm font-medium drop-shadow-lg">Phone</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. IN-APP LAYER: Consultation Room (Hidden Initially) -->
+                    <div id="simulation-container" class="absolute inset-0 z-20 opacity-0 pointer-events-none">
+                        
+                        <!-- [2] 상담실 배경 - ID assigned -->
+                        <div id="demo-bg-1" class="absolute inset-0 bg-cover bg-center z-10 transition-opacity duration-[3000ms]" style="opacity: 1;"></div>
+
+                        <!-- [3] 치유 공간 배경 - ID assigned -->
+                        <div id="demo-bg-2" class="absolute inset-0 bg-cover bg-center z-10 transition-opacity duration-[3000ms]" style="opacity: 0;"></div>
+                        
+                        <div id="bg-overlay" class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 z-20 pointer-events-none"></div>
+
+                        <!-- HUD Interface -->
+                        <div id="hud-layer" class="absolute inset-0 z-30 p-6 md:p-10 flex flex-col justify-between opacity-0 transition-opacity duration-1000 pointer-events-none">
+                            <!-- Top Bar -->
+                            <div class="flex justify-between items-start opacity-80">
+                                <div class="flex gap-6">
+                                    <div class="flex flex-col">
+                                        <span class="text-[10px] text-teal-400 font-future tracking-widest mb-1">REC ●</span>
+                                        <span id="hud-time" class="text-xl text-white font-mono font-light">00:00:00</span>
+                                    </div>
+                                    <div class="hidden md:block h-10 w-[1px] bg-white/20"></div>
+                                    <div class="hidden md:flex flex-col">
+                                        <span class="text-[10px] text-gray-400 font-future tracking-widest mb-1">BIO-SYNC</span>
+                                        <div class="flex items-center gap-2">
+                                            <i data-lucide="heart" class="w-4 h-4 text-red-500 fill-red-500 animate-pulse"></i>
+                                            <span id="hud-bpm" class="text-sm text-white font-mono">108 BPM</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex gap-3">
+                                     <div class="bg-white/10 backdrop-blur px-3 py-1 rounded-full border border-white/20 flex items-center gap-2">
+                                        <div class="w-2 h-2 bg-teal-400 rounded-full"></div>
+                                        <span class="text-xs text-white font-future">MindScape Active</span>
+                                     </div>
+                                     <i data-lucide="battery-medium" class="text-white opacity-80"></i>
+                                </div>
+                            </div>
+                            
+                            <!-- Fixed Chat Box (No Animation) -->
+                            <div class="w-full flex flex-col items-center gap-4">
+                                <div id="caption-container" class="bg-black/60 backdrop-blur-md border border-white/10 px-8 py-6 rounded-full text-center transform transition-all duration-500 opacity-0 translate-y-4">
+                                    <p id="caption-text" class="text-lg md:text-xl text-white font-medium leading-relaxed shadow-black drop-shadow-md">
+                                        <!-- Text goes here -->
+                                    </p>
+                                </div>
+                                <div id="voice-viz" class="flex gap-1 h-6 items-center opacity-0 transition-opacity duration-500">
+                                    <div class="w-1 bg-teal-400 h-2 animate-[bounce_1s_infinite]"></div>
+                                    <div class="w-1 bg-teal-400 h-4 animate-[bounce_1.2s_infinite]"></div>
+                                    <div class="w-1 bg-teal-400 h-3 animate-[bounce_0.8s_infinite]"></div>
+                                    <div class="w-1 bg-teal-400 h-5 animate-[bounce_1.1s_infinite]"></div>
+                                    <div class="w-1 bg-teal-400 h-2 animate-[bounce_0.9s_infinite]"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Detailed Security Architecture Section -->
+                <div class="mt-16 max-w-6xl mx-auto reveal">
+                    <div class="text-center mb-12">
+                        <span class="px-3 py-1 rounded-full bg-gray-100 text-gray-500 text-xs font-bold uppercase mb-3 inline-block border border-gray-200">Security Protocol</span>
+                        <h3 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">Ironclad Privacy Architecture</h3>
+                        <p class="text-gray-500 max-w-2xl mx-auto">MindScape는 당신의 가장 깊은 내면을 보호하기 위해<br>금융권 수준의 3중 보안 시스템(Triple-Layer Security)을 적용했습니다.</p>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-3 gap-8">
+                        <!-- Card 1: Edge AI -->
+                        <div class="bg-white/60 backdrop-blur-md border border-gray-200 p-8 rounded-3xl hover:shadow-xl hover:border-teal-200 transition-all duration-300 group text-center hover:-translate-y-2">
+                            <div class="w-16 h-16 mx-auto bg-teal-50 rounded-2xl flex items-center justify-center text-teal-600 mb-6 group-hover:scale-110 transition-transform shadow-sm">
+                                <i data-lucide="cpu" class="w-8 h-8"></i>
+                            </div>
+                            <h4 class="text-lg font-bold text-gray-800 mb-3">Edge AI Processing</h4>
+                            <p class="text-sm text-gray-500 leading-relaxed">
+                                클라우드 서버를 거치지 않고<br>
+                                <strong class="text-teal-600">XR 기기 자체 칩셋(NPU)</strong>에서<br>
+                                모든 상담 데이터를 실시간 처리합니다.<br>
+                                <span class="text-xs text-gray-400 mt-2 block">*외부 데이터 전송 0byte 보장</span>
+                            </p>
+                        </div>
+
+                        <!-- Card 2: Encryption -->
+                        <div class="bg-white/60 backdrop-blur-md border border-gray-200 p-8 rounded-3xl hover:shadow-xl hover:border-blue-200 transition-all duration-300 group text-center hover:-translate-y-2">
+                            <div class="w-16 h-16 mx-auto bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 mb-6 group-hover:scale-110 transition-transform shadow-sm">
+                                <i data-lucide="database-backup" class="w-8 h-8"></i>
+                            </div>
+                            <h4 class="text-lg font-bold text-gray-800 mb-3">AES-256 Encryption</h4>
+                            <p class="text-sm text-gray-500 leading-relaxed">
+                                기기에 저장되는 모든 로그는<br>
+                                <strong class="text-blue-600">군사 등급의 AES-256 암호화</strong>를 통해<br>
+                                물리적 분실 시에도 데이터를 완벽히 보호합니다.<br>
+                                <span class="text-xs text-gray-400 mt-2 block">*복호화 키는 사용자만 보유</span>
+                            </p>
+                        </div>
+
+                        <!-- Card 3: Optic ID (Modified) -->
+                        <div class="bg-white/60 backdrop-blur-md border border-gray-200 p-8 rounded-3xl hover:shadow-xl hover:border-purple-200 transition-all duration-300 group text-center hover:-translate-y-2">
+                            <div class="w-16 h-16 mx-auto bg-purple-50 rounded-2xl flex items-center justify-center text-purple-600 mb-6 group-hover:scale-110 transition-transform shadow-sm">
+                                <i data-lucide="scan-eye" class="w-8 h-8"></i>
+                            </div>
+                            <h4 class="text-lg font-bold text-gray-800 mb-3">Optic-ID Access</h4>
+                            <p class="text-sm text-gray-500 leading-relaxed">
+                                사용자 고유의 <strong class="text-purple-600">홍채 패턴(Iris Pattern)</strong>을 인식하여<br>
+                                기기 착용 시에만 상담 기록이 활성화됩니다.<br>
+                                미착용 시 데이터는 즉시 잠금 전환됩니다.<br>
+                                <span class="text-xs text-gray-400 mt-2 block">*실시간 생체 점유 인증 시스템</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Pricing Section (Light Mode, Transparent Background) -->
+        <section id="pricing" class="py-24 px-6 relative transition-colors duration-1000" data-theme="light">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-16 reveal">
+                    <span class="px-3 py-1 rounded-full border border-teal-500/30 bg-teal-50 text-teal-600 text-xs tracking-widest uppercase mb-4 inline-block">Pricing Plan</span>
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4 text-gray-900">Choose Your Journey</h2>
+                    <p class="text-gray-500">마음의 평화를 위한 합리적인 선택</p>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-8 reveal">
+                    <!-- Free Tier -->
+                    <div class="glass-card p-8 pricing-card border-gray-200 bg-white/60 flex flex-col relative group h-full">
+                        <div class="mb-6">
+                            <h3 class="text-xl font-bold text-gray-700 mb-2">Starter</h3>
+                            <div class="text-4xl font-bold text-gray-900 mb-2">₩0 <span class="text-sm font-normal text-gray-500">/ month</span></div>
+                            <p class="text-sm text-gray-500">MindScape의 핵심 기능을<br>부담 없이 경험해보세요.</p>
+                        </div>
+                        <ul class="space-y-4 mb-8 flex-1">
+                            <li class="flex items-center gap-3 text-sm text-gray-600"><i data-lucide="check" class="w-4 h-4 text-teal-500"></i>기본 상담 환경 1종 (Forest)</li>
+                            <li class="flex items-center gap-3 text-sm text-gray-600"><i data-lucide="check" class="w-4 h-4 text-teal-500"></i>AI 상담 (일 10분 제한)</li>
+                            <li class="flex items-center gap-3 text-sm text-gray-600"><i data-lucide="check" class="w-4 h-4 text-teal-500"></i>기본 감정 리포트</li>
+                        </ul>
+                        <button class="w-full py-3 rounded-xl border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium transition">Start Free</button>
+                    </div>
+
+                    <!-- Monthly Tier (Aligned) -->
+                    <div class="glass-card p-8 pricing-card border-teal-500/30 bg-teal-50/60 flex flex-col relative h-full shadow-xl">
+                        <div class="absolute top-0 right-0 px-3 py-1 bg-teal-500 text-white text-xs font-bold rounded-bl-xl rounded-tr-xl">POPULAR</div>
+                        <div class="mb-6">
+                            <h3 class="text-xl font-bold text-teal-600 mb-2">Monthly Pass</h3>
+                            <div class="text-4xl font-bold text-gray-900 mb-2">₩9,900 <span class="text-sm font-normal text-gray-500">/ month</span></div>
+                            <p class="text-sm text-gray-500">모든 기능을 자유롭게 이용하는<br>월간 구독 플랜입니다.</p>
+                        </div>
+                        <ul class="space-y-4 mb-8 flex-1">
+                            <li class="flex items-center gap-3 text-sm text-gray-700"><i data-lucide="check" class="w-4 h-4 text-teal-500"></i><strong>모든 상담 환경 무제한 이용</strong></li>
+                            <li class="flex items-center gap-3 text-sm text-gray-700"><i data-lucide="check" class="w-4 h-4 text-teal-500"></i><strong>4인의 AI 상담사 선택 가능</strong></li>
+                            <li class="flex items-center gap-3 text-sm text-gray-600"><i data-lucide="check" class="w-4 h-4 text-teal-500"></i>상담 시간 무제한</li>
+                            <li class="flex items-center gap-3 text-sm text-gray-600"><i data-lucide="check" class="w-4 h-4 text-teal-500"></i>오프라인 모드 지원</li>
+                        </ul>
+                        <button class="w-full py-3 rounded-xl bg-teal-500 hover:bg-teal-600 text-white font-bold shadow-lg shadow-teal-500/20 transition mb-3">Subscribe Monthly</button>
+                        <button onclick="switchView('premium')" class="w-full py-2 text-xs text-teal-600 hover:text-teal-800 font-medium flex items-center justify-center gap-1">View Premium Features <i data-lucide="arrow-right" class="w-3 h-3"></i></button>
+                    </div>
+
+                    <!-- Yearly Tier -->
+                    <div class="glass-card p-8 pricing-card border-purple-500/30 bg-purple-50/40 flex flex-col relative h-full">
+                        <div class="mb-6">
+                            <h3 class="text-xl font-bold text-purple-600 mb-2">Yearly Pass</h3>
+                            <div class="text-4xl font-bold text-gray-900 mb-2">₩99,000 <span class="text-sm font-normal text-gray-500">/ year</span></div>
+                            <p class="text-sm text-gray-500">월간 플랜과 혜택은 동일하지만<br><strong class="text-purple-600">약 2개월분 요금 할인</strong> 효과.</p>
+                        </div>
+                        <ul class="space-y-4 mb-8 flex-1">
+                            <li class="flex items-center gap-3 text-sm text-gray-600"><i data-lucide="check" class="w-4 h-4 text-purple-500"></i>Monthly Pass 모든 혜택 포함</li>
+                            <li class="flex items-center gap-3 text-sm text-gray-700"><i data-lucide="check" class="w-4 h-4 text-purple-500"></i><strong>연간 약 17% 비용 절감</strong></li>
+                            <li class="flex items-center gap-3 text-sm text-gray-600"><i data-lucide="check" class="w-4 h-4 text-purple-500"></i>Priority Support (우선 지원)</li>
+                        </ul>
+                        <button class="w-full py-3 rounded-xl border border-purple-500/50 hover:bg-purple-50 text-purple-600 font-medium transition mb-3">Subscribe Yearly</button>
+                        <button onclick="switchView('premium')" class="w-full py-2 text-xs text-purple-600 hover:text-purple-800 font-medium flex items-center justify-center gap-1">View Premium Features <i data-lucide="arrow-right" class="w-3 h-3"></i></button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- VIEW 3: PREMIUM FEATURES SHOWCASE (New) -->
+    <main id="view-premium" class="view-section hidden-view pt-32 pb-20 px-6 max-w-6xl mx-auto" data-theme="light">
+        <div class="text-center mb-16">
+            <span class="px-4 py-1 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-500 text-xs tracking-widest uppercase mb-6 inline-block">
+                Premium Benefits
+            </span>
+            <h1 class="text-4xl md:text-6xl font-bold leading-tight mb-4 text-gray-900">
+                당신만을 위한<br>
+                <span class="text-indigo-600">맞춤형 치유 경험</span>
+            </h1>
+            <p class="text-gray-500">4인의 AI 전문 상담사와 당신의 마음을 읽는 반응형 공간을 만나보세요.</p>
+        </div>
+
+        <!-- Feature 1: 4 AI Personas with Photos (Full-Background Card Style v2.9) -->
+        <div class="mb-24">
+            <h2 class="text-2xl font-bold text-gray-800 mb-8 border-l-4 border-indigo-500 pl-4">Meet Your AI Counselors</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Counselor 1: Aura -->
+                <div class="relative h-[400px] rounded-3xl overflow-hidden shadow-xl group cursor-pointer">
+                    <!-- Background Image (ID added) -->
+                    <img id="img-counselor-aura" src="" alt="Dr. Aura" 
+                         class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <!-- Gradient Overlay -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 transition-opacity duration-500 group-hover:opacity-90"></div>
+                    
+                    <!-- Content Wrapper (Padding Increased to p-8, Font Sizes Reduced) -->
+                    <div class="absolute inset-0 p-8 flex flex-col justify-between text-white">
+                        <!-- Top Badge -->
+                        <div class="flex items-start gap-2">
+                            <!-- BASIC Badge Added -->
+                            <span class="px-3 py-1 bg-teal-500/90 backdrop-blur-md rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm border border-teal-400/30">
+                                Basic
+                            </span>
+                            <span class="px-3 py-1 bg-indigo-600/90 backdrop-blur-md rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm">
+                                Empathy
+                            </span>
+                        </div>
+                        
+                        <!-- Bottom Text -->
+                        <div class="transform transition-transform duration-300 group-hover:-translate-y-1">
+                            <h3 class="text-2xl font-bold mb-1 leading-tight">Dr. Aura</h3>
+                            <p class="text-indigo-300 text-xs font-semibold mb-3 uppercase tracking-wide">따뜻한 공감과 위로</p>
+                            <p class="text-gray-200 text-xs leading-relaxed opacity-90 font-light">
+                                "당신의 모든 감정은 소중합니다.<br>마음 깊은 곳의 이야기를<br>들어드릴게요."
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Counselor 2: Theo -->
+                <div class="relative h-[400px] rounded-3xl overflow-hidden shadow-xl group cursor-pointer">
+                    <img id="img-counselor-theo" src="" alt="Prof. Theo" 
+                         class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 transition-opacity duration-500 group-hover:opacity-90"></div>
+                    
+                    <div class="absolute inset-0 p-8 flex flex-col justify-between text-white">
+                        <div class="flex items-start">
+                            <span class="px-3 py-1 bg-blue-600/90 backdrop-blur-md rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm">
+                                Logic
+                            </span>
+                        </div>
+                        
+                        <div class="transform transition-transform duration-300 group-hover:-translate-y-1">
+                            <h3 class="text-2xl font-bold mb-1 leading-tight">Prof. Theo</h3>
+                            <p class="text-blue-300 text-xs font-semibold mb-3 uppercase tracking-wide">냉철한 분석과 해결</p>
+                            <p class="text-gray-200 text-xs leading-relaxed opacity-90 font-light">
+                                "혼란스러운 문제들을<br>하나씩 분해해봅시다.<br>답은 반드시 존재합니다."
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Counselor 3: Serene -->
+                <div class="relative h-[400px] rounded-3xl overflow-hidden shadow-xl group cursor-pointer">
+                    <img id="img-counselor-serene" src="" alt="Guide Serene" 
+                         class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 transition-opacity duration-500 group-hover:opacity-90"></div>
+                    
+                    <div class="absolute inset-0 p-8 flex flex-col justify-between text-white">
+                        <div class="flex items-start">
+                            <span class="px-3 py-1 bg-emerald-600/90 backdrop-blur-md rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm">
+                                Meditation
+                            </span>
+                        </div>
+                        
+                        <div class="transform transition-transform duration-300 group-hover:-translate-y-1">
+                            <h3 class="text-2xl font-bold mb-1 leading-tight">Guide Serene</h3>
+                            <p class="text-emerald-300 text-xs font-semibold mb-3 uppercase tracking-wide">마인드풀니스 가이드</p>
+                            <p class="text-gray-200 text-xs leading-relaxed opacity-90 font-light">
+                                "깊게 숨을 들이마시세요.<br>지금 이 순간, 당신은<br>온전히 안전합니다."
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Counselor 4: Blaze -->
+                <div class="relative h-[400px] rounded-3xl overflow-hidden shadow-xl group cursor-pointer">
+                    <img id="img-counselor-blaze" src="" alt="Coach Blaze" 
+                         class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 transition-opacity duration-500 group-hover:opacity-90"></div>
+                    
+                    <div class="absolute inset-0 p-8 flex flex-col justify-between text-white">
+                        <div class="flex items-start">
+                            <span class="px-3 py-1 bg-orange-600/90 backdrop-blur-md rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm">
+                                Motivation
+                            </span>
+                        </div>
+                        
+                        <div class="transform transition-transform duration-300 group-hover:-translate-y-1">
+                            <h3 class="text-2xl font-bold mb-1 leading-tight">Coach Blaze</h3>
+                            <p class="text-orange-300 text-xs font-semibold mb-3 uppercase tracking-wide">강력한 동기 부여</p>
+                            <p class="text-gray-200 text-xs leading-relaxed opacity-90 font-light">
+                                "한계는 없습니다.<br>당신 안의 잠재력을<br>폭발시킬 준비가 되셨나요?"
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- New Feature: Create Custom Persona (Left-Aligned Text Layout) -->
+            <div class="mt-12 relative h-[500px] rounded-3xl overflow-hidden shadow-2xl group cursor-pointer border border-white/20">
+                <!-- Background Image (AI Creation Concept - Center Focussed) - ID assigned -->
+                <img id="img-custom-persona" src="" alt="Create Custom AI" 
+                     class="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105">
+                
+                <!-- Gradient Overlay (Darker on Left for text readability) -->
+                <div class="absolute inset-0 bg-gradient-to-l from-transparent via-black/50 to-black/90 opacity-90"></div>
+
+                <!-- Content (Left Aligned) -->
+                <div class="absolute inset-0 p-10 md:p-12 flex flex-col justify-start items-start text-left max-w-3xl mr-auto text-white">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-full bg-purple-500/20 border border-purple-400/50 flex items-center justify-center backdrop-blur-md animate-pulse shadow-[0_0_15px_rgba(168,85,247,0.5)]">
+                            <i data-lucide="sparkles" class="w-5 h-5 text-purple-200"></i>
+                        </div>
+                        <span class="text-purple-300 text-sm font-bold uppercase tracking-[0.2em] drop-shadow-sm">Generative AI Feature</span>
+                    </div>
+                    
+                    <h3 class="text-4xl md:text-5xl font-bold mb-6 leading-tight drop-shadow-lg">
+                        Create Your Own <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-200 to-pink-200">Perfect Persona</span>
+                    </h3>
+                    
+                    <div class="space-y-4 mb-10">
+                        <p class="text-gray-100 text-lg md:text-xl font-medium leading-relaxed drop-shadow-md">
+                            원하는 상담사가 없으신가요?
+                        </p>
+                        <p class="text-gray-200 text-base md:text-lg leading-loose font-light opacity-90 max-w-xl drop-shadow-md">
+                            생성형 AI를 통해 외모, 목소리, 성격, 전문 분야까지.<br>
+                            <strong class="text-white font-bold border-b border-white/30 pb-0.5">당신에게 가장 편안함을 주는 완벽한 상담사</strong>를 직접 설계하세요.
+                        </p>
+                    </div>
+
+                    <div class="group/btn flex items-center gap-3 px-6 py-3 rounded-full bg-white/10 hover:bg-white/20 border border-white/30 backdrop-blur-sm transition-all duration-300 hover:border-white/60">
+                        <span class="text-sm font-bold tracking-wide">Start Customizing</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4 group-hover/btn:translate-x-1 transition-transform"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature 2: Psycho-Responsive Environments -->
+        <div class="mb-24">
+            <h2 class="text-2xl font-bold text-gray-800 mb-8 border-l-4 border-purple-500 pl-4">Psycho-Responsive Environments</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <div class="relative rounded-2xl overflow-hidden shadow-2xl group h-80">
+                    <!-- Crossfading Backgrounds Demo - IDs assigned -->
+                    <img id="img-env-demo-1" src="" class="absolute inset-0 w-full h-full object-cover animate-[pulse_8s_infinite] opacity-50" alt="Space">
+                    <img id="img-env-demo-2" src="" class="absolute inset-0 w-full h-full object-cover animate-[pulse_8s_infinite_reverse] opacity-50" alt="Forest">
+                    
+                    <div class="absolute inset-0 bg-black/20 flex items-center justify-center">
+                        <div class="bg-white/10 backdrop-blur-md border border-white/30 px-6 py-3 rounded-full text-white font-bold flex items-center gap-3">
+                            <i data-lucide="activity" class="w-5 h-5 text-pink-400 animate-pulse"></i>
+                            Bio-Sync Active
+                        </div>
+                    </div>
+                </div>
+                <div class="space-y-6">
+                    <p class="text-lg text-gray-600 leading-relaxed">
+                        MindScape의 환경은 사용자가 직접 고르는 단순한 배경화면이 아닙니다.<br>
+                        <strong class="text-indigo-600">당신의 심리 상태(State of Mind)를 실시간으로 투영</strong>하는 거울입니다.
+                    </p>
+                    <ul class="space-y-4">
+                        <li class="flex gap-4">
+                            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 shrink-0"><i data-lucide="waves" class="w-5 h-5"></i></div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">Anxiety → Calm Sea</h4>
+                                <p class="text-sm text-gray-500">심박수가 높고 불안정할 때, 고요한 심해의 풍경으로 자동 전환되어 호흡을 안정시킵니다.</p>
+                            </div>
+                        </li>
+                        <li class="flex gap-4">
+                            <div class="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-600 shrink-0"><i data-lucide="sun" class="w-5 h-5"></i></div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">Depression → Warm Forest</h4>
+                                <p class="text-sm text-gray-500">우울감이 감지되면 따뜻한 햇살이 내리쬐는 숲으로 변해 세로토닌 분비를 유도합니다.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <button onclick="switchView('home'); navigateTo('pricing')" class="px-8 py-4 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-lg transition">
+                Back to Pricing
+            </button>
+        </div>
+    </main>
+
+    <!-- VIEW 2: VISION REPORT (Fully Restored) -->
+    <main id="view-vision" class="view-section hidden-view pt-32 pb-20 px-6 max-w-4xl mx-auto">
+        <div class="text-center mb-16">
+            <span class="px-4 py-1 rounded-full border border-teal-500/30 bg-teal-500/10 text-teal-400 text-xs tracking-widest uppercase mb-6 inline-block">
+                Final Assignment
+            </span>
+            <h1 class="text-4xl md:text-6xl font-bold leading-tight mb-4 font-future">
+                미래를 읽는 디자인 이야기의<br>
+                <span class="text-gradient">기말과제 보고서</span>
+            </h1>
+            <p class="text-gray-400">2026년 이후 디자인 트렌드 분석 및 사업 아이템 제안</p>
+        </div>
+
+        <div class="space-y-12">
+            <!-- Section 1: Trend Analysis -->
+            <div class="glass-card p-8 md:p-12">
+                <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                    <span class="w-8 h-8 bg-teal-500 rounded-lg flex items-center justify-center text-sm">01</span>
+                    트렌드 분석 (Trend Analysis)
+                </h2>
+                <p class="text-gray-300 leading-relaxed mb-8">
+                    2026년 이후, 기술은 고도로 발전하지만 역설적으로 인류는 <strong>극심한 사회적 피로와 미래에 대한 막연한 불안</strong>을 마주하게 될 것입니다.
+                    조직 내 경쟁 심화와 소통의 단절 속에서, '정서적 생존'이 개인의 최우선 가치로 떠오르는 시대가 예측됩니다.
+                </p>
+                
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="bg-white/5 p-6 rounded-xl border border-white/10"><div class="text-teal-400 font-bold mb-2">1. Emotional Shelter</div><p class="text-sm text-gray-400">외부의 사회적 압박과 불안으로부터 자신을 격리하고 보호받을 수 있는 '심리적 안전지대' 디자인의 부상.</p></div>
+                    <div class="bg-teal-500/10 p-6 rounded-xl border border-teal-500/30 ring-1 ring-teal-500/50"><div class="text-teal-300 font-bold mb-2">2. Phygital Reality</div><p class="text-sm text-gray-300">현실의 고독함을 채우기 위해, 물리적 공간에 디지털의 위로와 연결성을 더하는 공간 컴퓨팅의 일상화.</p></div>
+                    <div class="bg-white/5 p-6 rounded-xl border border-white/10"><div class="text-teal-400 font-bold mb-2">3. Neuro-aesthetics</div><p class="text-sm text-gray-400">단순한 심미성을 넘어, 뇌파를 안정시키고 스트레스를 낮추는 기능성 힐링 디자인(Healing Design).</p></div>
+                </div>
+            </div>
+
+            <!-- Section 2: Selected Trend & Insight -->
+            <div class="glass-card p-8 md:p-12">
+                <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                    <span class="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center text-sm">02</span>
+                    선정 트렌드 및 인사이트
+                </h2>
+                <div class="flex flex-col md:flex-row gap-8 items-start">
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-purple-300 mb-3">Phygital Reality (피지털 리얼리티)</h3>
+                        <p class="text-gray-300 leading-relaxed mb-4">
+                            현대인이 겪는 불안과 고립감은 더 이상 개인의 의지만으로 해결하기 어렵습니다.
+                            XR(확장현실) 기술을 통해 현실 공간을 <strong>'도피'가 아닌 '치유'의 공간</strong>으로 즉각 변화시키는 것이 가장 강력한 솔루션이 될 것이라 판단했습니다.
+                        </p>
+                        <div class="bg-purple-500/10 p-4 rounded-lg text-sm text-purple-200 border border-purple-500/20">
+                            "불안한 현실 위에 디지털 위로를 덧입혀, 마음의 균형을 되찾다."
+                        </div>
+                    </div>
+                    <div class="w-full md:w-1/3 bg-black/30 rounded-xl p-4 aspect-video flex items-center justify-center border border-white/10">
+                        <i data-lucide="layers" class="w-16 h-16 text-purple-500 opacity-80"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Business Item Proposal -->
+            <div class="glass-card p-8 md:p-12 border-teal-500/30 relative overflow-hidden mb-12">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-teal-500/10 blur-[80px] rounded-full"></div>
+                <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                    <span class="w-8 h-8 bg-gradient-to-br from-teal-400 to-blue-500 rounded-lg flex items-center justify-center text-sm text-black font-bold">03</span>
+                    사업 아이템 제안: MindScape
+                </h2>
+                
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-200 mb-2">1. 서비스 개요</h3>
+                        <p class="text-gray-400">AR(증강현실) 기반 개인 맞춤형 심리 케어 솔루션. 사용자의 현실 공간을 심리 상태에 맞는 가상 환경(숲, 바다 등)으로 실시간 변환.</p>
+                    </div>
+                    <hr class="border-white/10">
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-200 mb-2">2. 차별화 포인트</h3>
+                        <ul class="list-disc list-inside text-gray-400 space-y-2 ml-2">
+                            <li><strong class="text-teal-400">1인칭 시점 몰입(FPV):</strong> 스마트폰이 아닌 XR 글래스를 통해 360도 환경 변화 경험.</li>
+                            <li><strong class="text-teal-400">AI 페르소나:</strong> 단순 챗봇이 아닌, 라포(Rapport) 형성이 가능한 고도화된 AI 아바타 상담사.</li>
+                            <li><strong class="text-teal-400">Bio-Sync:</strong> 심박수 등 생체 신호와 연동되어 배경의 조도와 음악이 자동 조절됨.</li>
+                        </ul>
+                    </div>
+                    <hr class="border-white/10">
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-200 mb-2">3. 기대 효과</h3>
+                        <p class="text-gray-400">시간과 장소에 구애받지 않는 멘탈 케어 접근성 향상 및 약물 의존 없는 디지털 치료제(DTx)로서의 가능성.</p>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center">
+                    <button onclick="switchView('home'); navigateTo('xr-experience')" class="px-6 py-3 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 transition text-sm">
+                        앱 시뮬레이션 다시보기
+                    </button>
+                </div>
+            </div>
+
+            <!-- Section 4: Lean Canvas Analysis (New Content based on Image) -->
+            <div class="glass-card p-8 md:p-12 border-purple-500/30 relative overflow-hidden">
+                <div class="absolute bottom-0 left-0 w-64 h-64 bg-purple-500/10 blur-[80px] rounded-full"></div>
+                <h2 class="text-2xl font-bold mb-8 flex items-center gap-3">
+                    <span class="w-8 h-8 bg-gradient-to-br from-purple-400 to-pink-500 rounded-lg flex items-center justify-center text-sm text-black font-bold">04</span>
+                    프로젝트 탄생 배경 (Lean Canvas)
+                </h2>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- 1. Problem & Solution -->
+                    <div class="space-y-6">
+                        <div class="bg-white/5 p-6 rounded-xl border border-white/10 h-full">
+                            <div class="flex items-center gap-3 mb-4 text-purple-300">
+                                <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+                                <h3 class="font-bold text-lg">The Problem</h3>
+                            </div>
+                            <ul class="space-y-3 text-sm text-gray-400 list-disc list-inside">
+                                <li>심리상담소 방문의 <strong>높은 비용과 거리적/심리적 장벽</strong>.</li>
+                                <li>기존 텍스트/음성 기반 앱은 <strong>'깊이 있는 공감'</strong> 전달에 한계.</li>
+                                <li>우울증, 불면증 환자들의 <strong>약물 의존도 심화</strong> 문제.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="bg-purple-500/10 p-6 rounded-xl border border-purple-500/30 h-full">
+                            <div class="flex items-center gap-3 mb-4 text-purple-300">
+                                <i data-lucide="lightbulb" class="w-5 h-5"></i>
+                                <h3 class="font-bold text-lg">The Solution</h3>
+                            </div>
+                            <ul class="space-y-3 text-sm text-gray-300 list-disc list-inside">
+                                <li><strong>접근성 혁신:</strong> 집에서 편안하게 누리는 전문 상담 경험.</li>
+                                <li><strong>시각적 치유:</strong> 단순 대화를 넘어, 시각적 환경 변화를 통한 즉각적 안정 유도.</li>
+                                <li><strong>맞춤형 케어:</strong> 내담자 상태에 따른 실시간 환경(조명, 날씨) 제어.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- 2. Unique Value Proposition -->
+                    <div class="md:col-span-2 bg-gradient-to-r from-white/5 to-transparent p-6 rounded-xl border-l-4 border-teal-400">
+                        <div class="flex items-center gap-3 mb-2 text-teal-400">
+                            <i data-lucide="gem" class="w-5 h-5"></i>
+                            <h3 class="font-bold text-lg">Unique Value Proposition</h3>
+                        </div>
+                        <p class="text-xl md:text-2xl font-future text-white mb-2">"현실을 넘어선, 마음에 안식을."</p>
+                        <p class="text-sm text-gray-400">단순한 언어적 위로를 넘어, 증강현실(AR)로 현실 공간을 재구성하여 즉각적인 심리적 안전지대를 제공합니다.</p>
+                    </div>
+
+                    <!-- 3. Target & Unfair Advantage -->
+                    <div class="bg-white/5 p-6 rounded-xl border border-white/10">
+                        <div class="flex items-center gap-3 mb-4 text-blue-300">
+                            <i data-lucide="target" class="w-5 h-5"></i>
+                            <h3 class="font-bold text-lg">Target Customer</h3>
+                        </div>
+                        <p class="text-sm text-gray-400 leading-relaxed">
+                            단순한 위로의 말만으로는 해소되지 않는 깊은 우울감을 가진 사람들, 
+                            그리고 <strong>즉각적이고 시각적인 환경의 변화</strong>를 통해 안정을 찾고자 하는 현대인.
+                        </p>
+                    </div>
+
+                    <div class="bg-white/5 p-6 rounded-xl border border-white/10">
+                        <div class="flex items-center gap-3 mb-4 text-orange-300">
+                            <i data-lucide="trophy" class="w-5 h-5"></i>
+                            <h3 class="font-bold text-lg">Unfair Advantage</h3>
+                        </div>
+                        <ul class="space-y-2 text-sm text-gray-400">
+                            <li class="flex gap-2"><span class="text-orange-400">✓</span> 상담사가 내담자의 환경(Map)을 직접 컨트롤</li>
+                            <li class="flex gap-2"><span class="text-orange-400">✓</span> 실제 대면 상담 이상의 초현실적 라포 형성</li>
+                            <li class="flex gap-2"><span class="text-orange-400">✓</span> 실시간 생체 데이터 기반 감정 상태 확인</li>
+                        </ul>
+                    </div>
+
+                    <!-- 4. Revenue & Cost -->
+                    <div class="md:col-span-2 grid md:grid-cols-2 gap-8 pt-4 border-t border-white/10 mt-4">
+                        <div>
+                            <h4 class="text-gray-500 font-bold text-xs uppercase tracking-wider mb-3">Revenue Stream</h4>
+                            <ul class="text-sm text-gray-300 space-y-2">
+                                <li>• <strong>Freemium:</strong> 기본 기능 무료 + 프리미엄 아바타/환경 구독</li>
+                                <li>• <strong>Marketplace:</strong> 다양한 심리 치유 테마 및 상담사 스킨 판매</li>
+                                <li>• <strong>B2B Partnership:</strong> 기존 심리상담센터와 연계한 윈윈 모델</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="text-gray-500 font-bold text-xs uppercase tracking-wider mb-3">Key Metrics</h4>
+                            <ul class="text-sm text-gray-300 space-y-2">
+                                <li>• 마음 지수 (Mind Score) 개선율</li>
+                                <li>• 일일 활성 사용자 (DAU) 및 체류 시간</li>
+                                <li>• 유료 구독 전환율 및 지속 방문율</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="border-t border-gray-200 py-8 text-center text-gray-500 text-xs transition-colors duration-500 flex flex-col gap-2">
+        <p>&copy; 2026 MindScape Project. All rights reserved.</p>
+        <p class="opacity-60">본 웹사이트는 AI 기술을 활용하여 기획 및 제작되었습니다.</p>
+    </footer>
+
+    <script>
+        // Site Configuration: Centralized Image Management
+        const siteConfig = {
+            images: {
+                launcher: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=1000&auto=format&fit=crop',
+                room: 'https://images.unsplash.com/photo-1763827657709-b1bbc3c4945b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+                nightSky: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1000&auto=format&fit=crop',
+                sunnyForest: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1000&auto=format&fit=crop',
+                counselors: {
+                    aura: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=800&h=1000&auto=format&fit=crop',
+                    theo: 'https://images.unsplash.com/photo-1537511446984-935f663eb1f4?q=80&w=800&h=1000&auto=format&fit=crop',
+                    serene: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=800&h=1000&auto=format&fit=crop',
+                    blaze: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=800&h=1000&auto=format&fit=crop'
+                },
+                customPersona: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=2000&auto=format&fit=crop',
+                environments: {
+                    space: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1000&auto=format&fit=crop',
+                    forest: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1000&auto=format&fit=crop'
+                }
+            }
+        };
+
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Function to apply images on load
+        function applyImages() {
+            // Backgrounds
+            const launcherBg = document.getElementById('launcher-bg');
+            if(launcherBg) launcherBg.style.backgroundImage = `url('${siteConfig.images.launcher}')`;
+
+            const demoBg1 = document.getElementById('demo-bg-1');
+            if(demoBg1) demoBg1.style.backgroundImage = `url('${siteConfig.images.room}')`;
+
+            const demoBg2 = document.getElementById('demo-bg-2');
+            if(demoBg2) demoBg2.style.backgroundImage = `url('${siteConfig.images.nightSky}')`;
+
+            const featureCardBg = document.getElementById('feature-card-bg');
+            if(featureCardBg) featureCardBg.style.backgroundImage = `url('${siteConfig.images.sunnyForest}')`;
+
+            // Counselor Images
+            const auraImg = document.getElementById('img-counselor-aura');
+            if(auraImg) auraImg.src = siteConfig.images.counselors.aura;
+
+            const theoImg = document.getElementById('img-counselor-theo');
+            if(theoImg) theoImg.src = siteConfig.images.counselors.theo;
+
+            const sereneImg = document.getElementById('img-counselor-serene');
+            if(sereneImg) sereneImg.src = siteConfig.images.counselors.serene;
+
+            const blazeImg = document.getElementById('img-counselor-blaze');
+            if(blazeImg) blazeImg.src = siteConfig.images.counselors.blaze;
+
+            // Custom Persona Image
+            const customPersonaImg = document.getElementById('img-custom-persona');
+            if(customPersonaImg) customPersonaImg.src = siteConfig.images.customPersona;
+
+            // Environment Demo Images
+            const envDemo1 = document.getElementById('img-env-demo-1');
+            if(envDemo1) envDemo1.src = siteConfig.images.environments.space;
+
+            const envDemo2 = document.getElementById('img-env-demo-2');
+            if(envDemo2) envDemo2.src = siteConfig.images.environments.forest;
+        }
+
+        // Run image application on load
+        document.addEventListener('DOMContentLoaded', applyImages);
+
+        // VIEW SWITCHING LOGIC (Simple SPA Router)
+        function switchView(viewName) {
+            const homeView = document.getElementById('view-home');
+            const visionView = document.getElementById('view-vision');
+            const premiumView = document.getElementById('view-premium'); // New
+            const nav = document.querySelector('nav');
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'instant' });
+
+            // Defensive checks
+            if (homeView) homeView.classList.add('hidden-view');
+            if (visionView) visionView.classList.add('hidden-view');
+            if (premiumView) premiumView.classList.add('hidden-view');
+
+            if (viewName === 'vision' && visionView) {
+                visionView.classList.remove('hidden-view');
+                document.body.classList.remove('light-mode'); // Vision is dark
+            } else if (viewName === 'premium' && premiumView) {
+                premiumView.classList.remove('hidden-view');
+                document.body.classList.add('light-mode'); // Premium page is light
+            } else if (homeView) {
+                homeView.classList.remove('hidden-view');
+                // Home view theme depends on scroll, handled by observer
+                // Trigger initial check
+                if(window.scrollY === 0) document.body.classList.remove('light-mode');
+            }
+        }
+
+        // Navigation Helper (Go to Home view then scroll)
+        function navigateTo(sectionId) {
+            // Ensure we are on home view first
+            const homeView = document.getElementById('view-home');
+            // If we are navigating to 'pricing' but currently on 'premium', just switch view to home then scroll
+            
+            if (homeView && homeView.classList.contains('hidden-view')) {
+                switchView('home');
+                // Wait a tiny bit for view to render before scrolling
+                setTimeout(() => {
+                    const section = document.getElementById(sectionId);
+                    if(section) section.scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+            } else {
+                const section = document.getElementById(sectionId);
+                if(section) section.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Theme Switcher Logic (Improved for Scroll Up)
+        const body = document.body;
+        const heroSection = document.getElementById('hero');
+        const arTrigger = document.getElementById('ar-section-trigger');
+        const xrExperienceSection = document.getElementById('xr-experience');
+        const pricingSection = document.getElementById('pricing');
+        
+        const themeObserver = new IntersectionObserver((entries) => {
+            // Only run theme logic if we are in home view
+            const homeView = document.getElementById('view-home');
+            if (homeView && homeView.classList.contains('hidden-view')) return;
+
+            entries.forEach(entry => {
+                // 0. Hero Section Trigger (Force Dark)
+                if (entry.target.id === 'hero') {
+                    if (entry.isIntersecting) {
+                        body.classList.remove('light-mode');
+                    }
+                }
+
+                // 1. Light Mode Trigger (AR Section & XR Experience & Pricing)
+                // XR Experience 섹션이 화면에 20% 이상 보이면 Light Mode 켜기
+                if (entry.target.id === 'ar-section-trigger' || entry.target.id === 'xr-experience' || entry.target.id === 'pricing') {
+                    if (entry.isIntersecting) {
+                        body.classList.add('light-mode');
+                    }
+                }
+            });
+        }, { threshold: 0.2, rootMargin: "-10% 0px -10% 0px" });
+
+        if(heroSection) themeObserver.observe(heroSection);
+        if(arTrigger) themeObserver.observe(arTrigger);
+        if(xrExperienceSection) themeObserver.observe(xrExperienceSection);
+        if(pricingSection) themeObserver.observe(pricingSection);
+
+        // Reveal Animation
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => {
+            revealObserver.observe(el);
+        });
+
+        // --- APP LAUNCHER & SIMULATION LOGIC ---
+        const launcher = document.getElementById('app-launcher');
+        const simulationContainer = document.getElementById('simulation-container');
+        const hudLayer = document.getElementById('hud-layer');
+        const demoBg1 = document.getElementById('demo-bg-1');
+        const demoBg2 = document.getElementById('demo-bg-2');
+        const bgOverlay = document.getElementById('bg-overlay');
+        const captionContainer = document.getElementById('caption-container');
+        const captionText = document.getElementById('caption-text');
+        const voiceViz = document.getElementById('voice-viz');
+        const hudTime = document.getElementById('hud-time');
+        const hudBpm = document.getElementById('hud-bpm');
+
+        function launchMindScape() {
+            // 1. Trigger Zoom Animation
+            launcher.classList.add('launching');
+            
+            // 2. Wait for zoom to finish, then switch layers
+            setTimeout(() => {
+                // Fade out launcher completely
+                launcher.style.opacity = '0';
+                
+                // Fade in Simulation (Background + HUD) with soft animation
+                simulationContainer.classList.add('fade-in-sim');
+                simulationContainer.style.opacity = '1';
+                simulationContainer.style.pointerEvents = 'auto';
+                
+                // Show HUD
+                setTimeout(() => {
+                    hudLayer.style.opacity = '1';
+                }, 500);
+                
+                // Start the Script
+                startSimulationFlow();
+            }, 1000); // Sync with CSS animation duration
+        }
+
+        const dialogues = [
+            { text: "User: 요즘 미래가 너무 불안해서 잠이 안 와...", type: "user", delay: 1000 },
+            { text: "AI Counselor: 저런, 미래에 대한 걱정 때문에 밤잠을 설치고 계시군요.", type: "avatar", delay: 4000 },
+            { text: "AI Counselor: 구체적으로 어떤 부분이 가장 걱정되시나요?", type: "avatar", delay: 7000 },
+            { text: "User: 내가 잘하고 있는 건지... 남들보다 뒤처지는 느낌이야.", type: "user", delay: 11000 },
+            { text: "AI Counselor: 충분히 그렇게 느끼실 수 있어요. 하지만 지금도 충분히 잘 해내고 계신걸요.", type: "avatar", delay: 15000 },
+            { text: "AI Counselor: 지금은 불안한 마음을 잠시 내려놓고 쉬는 게 중요해요.", type: "avatar", delay: 19000 },
+            { text: "AI Counselor: 편안하게 주무실 수 있게 별이 쏟아지는 밤하늘 아래로 안내해 드릴게요.", type: "avatar", delay: 23000 },
+            { text: "Environment shifting...", type: "system", delay: 27000 },
+            { text: "AI Counselor: 이 풍경을 보니 마음이 좀 어떠신가요?", type: "avatar", delay: 31000 }
+        ];
+
+        function updateCaption(text, type) {
+            captionContainer.style.opacity = '0';
+            voiceViz.style.opacity = '0';
+
+            setTimeout(() => {
+                if (type === 'user') {
+                    captionText.innerHTML = `<span class="text-teal-400 font-bold text-sm block mb-1">USER</span>${text.replace('User: ', '')}`;
+                    voiceViz.style.opacity = '1';
+                } else if (type === 'avatar') {
+                    captionText.innerHTML = `<span class="text-purple-400 font-bold text-sm block mb-1">AI COUNSELOR</span>${text.replace('AI Counselor: ', '')}`;
+                } else {
+                    captionText.innerHTML = `<span class="text-gray-400 italic text-sm">${text}</span>`;
+                }
+                captionContainer.style.opacity = '1';
+            }, 500);
+        }
+
+        // Clock & Heart Rate Logic
+        let clockInterval, bpmInterval;
+        let currentBpm = 108, targetBpm = 108;
+
+        function startClock() {
+            if(clockInterval) clearInterval(clockInterval);
+            const updateTime = () => {
+                const now = new Date();
+                if(hudTime) hudTime.innerText = now.toLocaleTimeString('en-GB', { hour12: false });
+            };
+            updateTime();
+            clockInterval = setInterval(updateTime, 1000);
+        }
+
+        function startHeartRateMonitor() {
+            if(bpmInterval) clearInterval(bpmInterval);
+            currentBpm = 108; targetBpm = 108;
+            bpmInterval = setInterval(() => {
+                const diff = targetBpm - currentBpm;
+                const change = diff * 0.1;
+                const noise = (Math.random() - 0.5) * 3;
+                currentBpm += change + (Math.random() > 0.7 ? noise : 0);
+                if(currentBpm > 120) currentBpm = 120;
+                if(currentBpm < 60) currentBpm = 60;
+                if(hudBpm) hudBpm.innerText = `${Math.round(currentBpm)} BPM`;
+            }, 800);
+        }
+
+        function startSimulationFlow() {
+            startClock();
+            startHeartRateMonitor();
+            
+            dialogues.forEach((line) => {
+                setTimeout(() => {
+                    updateCaption(line.text, line.type);
+                    if(line.text.includes("Environment shifting")) {
+                        // 1. Fade out first background (Go to Black)
+                        demoBg1.style.opacity = "0";
+                        
+                        // 2. Wait for blackout (2 seconds delay), then Fade in second background
+                        setTimeout(() => {
+                            demoBg2.style.opacity = "1"; 
+                            
+                            bgOverlay.classList.remove('from-black/60');
+                            bgOverlay.classList.add('from-black/30');
+                            targetBpm = 72; 
+                        }, 2000); // Delay for blackout effect
+                    }
+                }, line.delay);
+            });
+        }
+    </script>
+</body>
+</html>
