@@ -720,7 +720,7 @@
                 </div>
                 <div class="space-y-6">
                     <p class="text-lg text-gray-600 leading-relaxed">
-                        MindScape의 환경은 사용자가 고르는 단순한 배경화면이 아닙니다.<br>
+                        MindScape의 환경은 사용자가 직접 고르는 단순한 배경화면이 아닙니다.<br>
                         <strong class="text-indigo-600">당신의 심리 상태(State of Mind)를 실시간으로 투영</strong>하는 거울입니다.
                     </p>
                     <ul class="space-y-4">
@@ -813,12 +813,15 @@
                     사업 아이템 제안: MindScape
                 </h2>
                 
-                <div class="space-y-6">
+                <div class="space-y-8">
+                    <!-- 1. Overview -->
                     <div>
                         <h3 class="text-lg font-bold text-gray-200 mb-2">1. 서비스 개요</h3>
-                        <p class="text-gray-400">AR(증강현실) 기반 개인 맞춤형 심리 케어 솔루션. 사용자의 현실 공간을 심리 상태에 맞는 가상 환경(숲, 바다 등)으로 실시간 변환.</p>
+                        <p class="text-gray-400 leading-relaxed">AR(증강현실) 기반 개인 맞춤형 심리 케어 솔루션. 사용자의 현실 공간을 심리 상태에 맞는 가상 환경(숲, 바다 등)으로 실시간 변환.</p>
                     </div>
                     <hr class="border-white/10">
+
+                    <!-- 2. Differentiation -->
                     <div>
                         <h3 class="text-lg font-bold text-gray-200 mb-2">2. 차별화 포인트</h3>
                         <ul class="list-disc list-inside text-gray-400 space-y-2 ml-2">
@@ -828,13 +831,37 @@
                         </ul>
                     </div>
                     <hr class="border-white/10">
+
+                    <!-- 3. Expected Effect -->
                     <div>
                         <h3 class="text-lg font-bold text-gray-200 mb-2">3. 기대 효과</h3>
-                        <p class="text-gray-400">시간과 장소에 구애받지 않는 멘탈 케어 접근성 향상 및 약물 의존 없는 디지털 치료제(DTx)로서의 가능성.</p>
+                        <p class="text-gray-400 leading-relaxed">시간과 장소에 구애받지 않는 멘탈 케어 접근성 향상 및 약물 의존 없는 디지털 치료제(DTx)로서의 가능성.</p>
+                    </div>
+                    <hr class="border-white/10">
+
+                    <!-- 4. Revenue Stream (Converted from Grid to List) -->
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-200 mb-2">4. 수익 모델 (Revenue Stream)</h3>
+                        <ul class="list-disc list-inside text-gray-400 space-y-2 ml-2">
+                            <li><strong class="text-teal-400">Freemium Model:</strong> 기본 기능 무료 + 프리미엄 아바타/환경 구독</li>
+                            <li><strong class="text-teal-400">Marketplace:</strong> 다양한 심리 치유 테마 및 상담사 스킨 판매</li>
+                            <li><strong class="text-teal-400">B2B Partnership:</strong> 기존 심리상담센터와 연계한 윈윈 모델</li>
+                        </ul>
+                    </div>
+                    <hr class="border-white/10">
+
+                    <!-- 5. Key Metrics (Converted from Grid to List) -->
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-200 mb-2">5. 핵심 지표 (Key Metrics)</h3>
+                        <ul class="list-disc list-inside text-gray-400 space-y-2 ml-2">
+                            <li><strong class="text-teal-400">Mind Score Improvement:</strong> 마음 지수 개선율 (사용 전후 비교)</li>
+                            <li><strong class="text-teal-400">Engagement:</strong> 일일 활성 사용자 (DAU) 및 평균 체류 시간</li>
+                            <li><strong class="text-teal-400">Conversion:</strong> 유료 구독 전환율 (Conversion Rate)</li>
+                        </ul>
                     </div>
                 </div>
 
-                <div class="mt-8 text-center">
+                <div class="mt-10 text-center">
                     <button onclick="switchView('home'); navigateTo('xr-experience')" class="px-6 py-3 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 transition text-sm">
                         앱 시뮬레이션 다시보기
                     </button>
@@ -882,7 +909,7 @@
                 </div>
             </div>
 
-            <!-- Section 5: Target Audience & Strategy (New Section) -->
+            <!-- Section 5: Target Audience & Strategy (Modified) -->
             <div class="glass-card p-8 md:p-12 border-blue-500/30 relative overflow-hidden">
                 <div class="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 blur-[80px] rounded-full"></div>
                 <h2 class="text-2xl font-bold mb-8 flex items-center gap-3">
@@ -915,37 +942,10 @@
                             <h3 class="font-bold text-lg">Unfair Advantage</h3>
                         </div>
                         <ul class="space-y-3 text-sm text-gray-400">
-                            <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-orange-400 shrink-0"></i> 내담자의 따라 시각환경을 유동적으로 변경
-</li>
+                            <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-orange-400 shrink-0"></i> 상담사가 내담자의 XR 환경(Map) 직접 컨트롤</li>
                             <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-orange-400 shrink-0"></i> 실제 대면 상담 이상의 초현실적 라포 형성</li>
                             <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-orange-400 shrink-0"></i> 실시간 생체 데이터 기반 감정 상태 확인</li>
                         </ul>
-                    </div>
-
-                    <!-- 5. Revenue & Key Metrics -->
-                    <div class="md:col-span-2 grid md:grid-cols-2 gap-8 pt-6 border-t border-white/10">
-                        <div>
-                            <div class="flex items-center gap-2 mb-3">
-                                <i data-lucide="coins" class="w-4 h-4 text-green-400"></i>
-                                <h4 class="text-gray-300 font-bold text-sm uppercase tracking-wider">Revenue Stream</h4>
-                            </div>
-                            <ul class="text-sm text-gray-400 space-y-2 pl-6 list-disc marker:text-green-500">
-                                <li><strong>Premium:</strong> 기본 기능 무료 + 프리미엄 아바타/환경 구독</li>
-                                <li><strong>Marketplace:</strong> 다양한 심리 치유 테마 및 상담사 변경</li>
-                                <li><strong>B2B Partnership:</strong> 기존 심리상담센터와 연계한 모델</li>
-                            </ul>
-                        </div>
-                        <div>
-                            <div class="flex items-center gap-2 mb-3">
-                                <i data-lucide="bar-chart-2" class="w-4 h-4 text-pink-400"></i>
-                                <h4 class="text-gray-300 font-bold text-sm uppercase tracking-wider">Key Metrics</h4>
-                            </div>
-                            <ul class="text-sm text-gray-400 space-y-2 pl-6 list-disc marker:text-pink-500">
-                                <li>마음 지수 (Mind Score) 개선율</li>
-                                <li>일일 활성 사용자 (DAU) 및 평균 체류 시간</li>
-                                <li>유료 구독 전환율 (Conversion Rate)</li>
-                            </ul>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -962,16 +962,16 @@
         const siteConfig = {
             images: {
                 launcher: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=1000&auto=format&fit=crop',
-                room: 'room.png',
+                room: 'https://images.unsplash.com/photo-1763827657709-b1bbc3c4945b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
                 nightSky: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1000&auto=format&fit=crop',
                 sunnyForest: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1000&auto=format&fit=crop',
                 counselors: {
-                    aura: 'aura.png',
-                    theo: 'theo.png',
-                    serene: 'serene.png',
-                    blaze: 'blaze.png'
+                    aura: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=800&h=1000&auto=format&fit=crop',
+                    theo: 'https://images.unsplash.com/photo-1537511446984-935f663eb1f4?q=80&w=800&h=1000&auto=format&fit=crop',
+                    serene: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=800&h=1000&auto=format&fit=crop',
+                    blaze: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=800&h=1000&auto=format&fit=crop'
                 },
-                customPersona: 'customPersona.png',
+                customPersona: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=2000&auto=format&fit=crop',
                 environments: {
                     space: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1000&auto=format&fit=crop',
                     forest: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1000&auto=format&fit=crop'
