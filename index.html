@@ -841,8 +841,8 @@
                 </div>
             </div>
 
-            <!-- Section 4: Lean Canvas Analysis (New Content based on Image) -->
-            <div class="glass-card p-8 md:p-12 border-purple-500/30 relative overflow-hidden">
+            <!-- Section 4: Project Background (Problem & Solution Only) -->
+            <div class="glass-card p-8 md:p-12 border-purple-500/30 relative overflow-hidden mb-12">
                 <div class="absolute bottom-0 left-0 w-64 h-64 bg-purple-500/10 blur-[80px] rounded-full"></div>
                 <h2 class="text-2xl font-bold mb-8 flex items-center gap-3">
                     <span class="w-8 h-8 bg-gradient-to-br from-purple-400 to-pink-500 rounded-lg flex items-center justify-center text-sm text-black font-bold">04</span>
@@ -850,7 +850,7 @@
                 </h2>
 
                 <div class="grid md:grid-cols-2 gap-8">
-                    <!-- 1. Problem & Solution -->
+                    <!-- 1. Problem -->
                     <div class="space-y-6">
                         <div class="bg-white/5 p-6 rounded-xl border border-white/10 h-full">
                             <div class="flex items-center gap-3 mb-4 text-purple-300">
@@ -865,6 +865,7 @@
                         </div>
                     </div>
 
+                    <!-- 2. Solution -->
                     <div class="space-y-6">
                         <div class="bg-purple-500/10 p-6 rounded-xl border border-purple-500/30 h-full">
                             <div class="flex items-center gap-3 mb-4 text-purple-300">
@@ -878,57 +879,71 @@
                             </ul>
                         </div>
                     </div>
+                </div>
+            </div>
 
-                    <!-- 2. Unique Value Proposition -->
-                    <div class="md:col-span-2 bg-gradient-to-r from-white/5 to-transparent p-6 rounded-xl border-l-4 border-teal-400">
-                        <div class="flex items-center gap-3 mb-2 text-teal-400">
-                            <i data-lucide="gem" class="w-5 h-5"></i>
-                            <h3 class="font-bold text-lg">Unique Value Proposition</h3>
-                        </div>
-                        <p class="text-xl md:text-2xl font-future text-white mb-2">"현실을 넘어선, 마음에 안식을."</p>
-                        <p class="text-sm text-gray-400">단순한 언어적 위로를 넘어, 증강현실(AR)로 현실 공간을 재구성하여 즉각적인 심리적 안전지대를 제공합니다.</p>
-                    </div>
+            <!-- Section 5: Target Audience & Strategy (New Section) -->
+            <div class="glass-card p-8 md:p-12 border-blue-500/30 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 blur-[80px] rounded-full"></div>
+                <h2 class="text-2xl font-bold mb-8 flex items-center gap-3">
+                    <span class="w-8 h-8 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-lg flex items-center justify-center text-sm text-black font-bold">05</span>
+                    우리의 고객이 될 사람들 (Target & Strategy)
+                </h2>
 
-                    <!-- 3. Target & Unfair Advantage -->
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- 3. Target Customer -->
                     <div class="bg-white/5 p-6 rounded-xl border border-white/10">
                         <div class="flex items-center gap-3 mb-4 text-blue-300">
                             <i data-lucide="target" class="w-5 h-5"></i>
                             <h3 class="font-bold text-lg">Target Customer</h3>
                         </div>
-                        <p class="text-sm text-gray-400 leading-relaxed">
+                        <p class="text-sm text-gray-400 leading-relaxed mb-4">
                             단순한 위로의 말만으로는 해소되지 않는 깊은 우울감을 가진 사람들, 
                             그리고 <strong>즉각적이고 시각적인 환경의 변화</strong>를 통해 안정을 찾고자 하는 현대인.
                         </p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-2 py-1 bg-blue-500/20 rounded text-xs text-blue-300">#직장인_번아웃</span>
+                            <span class="px-2 py-1 bg-blue-500/20 rounded text-xs text-blue-300">#불면증</span>
+                            <span class="px-2 py-1 bg-blue-500/20 rounded text-xs text-blue-300">#코로나_블루</span>
+                        </div>
                     </div>
 
+                    <!-- 4. Unfair Advantage -->
                     <div class="bg-white/5 p-6 rounded-xl border border-white/10">
                         <div class="flex items-center gap-3 mb-4 text-orange-300">
                             <i data-lucide="trophy" class="w-5 h-5"></i>
                             <h3 class="font-bold text-lg">Unfair Advantage</h3>
                         </div>
-                        <ul class="space-y-2 text-sm text-gray-400">
-                            <li class="flex gap-2"><span class="text-orange-400">✓</span> 내담자의 따라 시각환경을 유동적으로 변경</li>
-                            <li class="flex gap-2"><span class="text-orange-400">✓</span> 실제 대면 상담 이상의 초현실적 라포 형성</li>
-                            <li class="flex gap-2"><span class="text-orange-400">✓</span> 실시간 생체 데이터 기반 감정 상태 확인</li>
+                        <ul class="space-y-3 text-sm text-gray-400">
+                            <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-orange-400 shrink-0"></i> 내담자의 따라 시각환경을 유동적으로 변경
+</li>
+                            <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-orange-400 shrink-0"></i> 실제 대면 상담 이상의 초현실적 라포 형성</li>
+                            <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-orange-400 shrink-0"></i> 실시간 생체 데이터 기반 감정 상태 확인</li>
                         </ul>
                     </div>
 
-                    <!-- 4. Revenue & Cost -->
-                    <div class="md:col-span-2 grid md:grid-cols-2 gap-8 pt-4 border-t border-white/10 mt-4">
+                    <!-- 5. Revenue & Key Metrics -->
+                    <div class="md:col-span-2 grid md:grid-cols-2 gap-8 pt-6 border-t border-white/10">
                         <div>
-                            <h4 class="text-gray-500 font-bold text-xs uppercase tracking-wider mb-3">Revenue Stream</h4>
-                            <ul class="text-sm text-gray-300 space-y-2">
-                                <li>• <strong>Premium:</strong> 기본 기능 무료 + 프리미엄 아바타/환경 구독</li>
-                                <li>• <strong>Marketplace:</strong> 다양한 심리 치유 테마 및 상담사 변경</li>
-                                <li>• <strong>B2B Partnership:</strong> 기존 심리상담센터와 연계한 모델</li>
+                            <div class="flex items-center gap-2 mb-3">
+                                <i data-lucide="coins" class="w-4 h-4 text-green-400"></i>
+                                <h4 class="text-gray-300 font-bold text-sm uppercase tracking-wider">Revenue Stream</h4>
+                            </div>
+                            <ul class="text-sm text-gray-400 space-y-2 pl-6 list-disc marker:text-green-500">
+                                <li><strong>Premium:</strong> 기본 기능 무료 + 프리미엄 아바타/환경 구독</li>
+                                <li><strong>Marketplace:</strong> 다양한 심리 치유 테마 및 상담사 변경</li>
+                                <li><strong>B2B Partnership:</strong> 기존 심리상담센터와 연계한 모델</li>
                             </ul>
                         </div>
                         <div>
-                            <h4 class="text-gray-500 font-bold text-xs uppercase tracking-wider mb-3">Key Metrics</h4>
-                            <ul class="text-sm text-gray-300 space-y-2">
-                                <li>• 마음 지수 (Mind Score) 개선율</li>
-                                <li>• 일일 활성 사용자 (DAU) 및 체류 시간</li>
-                                <li>• 유료 구독 전환율 및 지속 방문율</li>
+                            <div class="flex items-center gap-2 mb-3">
+                                <i data-lucide="bar-chart-2" class="w-4 h-4 text-pink-400"></i>
+                                <h4 class="text-gray-300 font-bold text-sm uppercase tracking-wider">Key Metrics</h4>
+                            </div>
+                            <ul class="text-sm text-gray-400 space-y-2 pl-6 list-disc marker:text-pink-500">
+                                <li>마음 지수 (Mind Score) 개선율</li>
+                                <li>일일 활성 사용자 (DAU) 및 평균 체류 시간</li>
+                                <li>유료 구독 전환율 (Conversion Rate)</li>
                             </ul>
                         </div>
                     </div>
